@@ -7,7 +7,7 @@ on:
     - main
 
 # 워크플로우 작업을 정의
-jobs:
+job:
   test:
     runs-on: ubuntu-latest
     # step은 작업의 단계를 정의
