@@ -1,15 +1,42 @@
 name: Bare Minimum Requirements
 
-on: [push, pull_request]
+# on 키워드 === 트리거 / "push" 이벤트가 발생하면 아래의 워크플로우를 실행
+on:
+  push :
+    branches:
+    - main
 
+# 워크플로우 작업을 정의
 jobs:
   test:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Bare Minimum Requirements
-        uses: actions/setup-node@v1
-        with:
-          node-version: '16'
-      - run: npm install
-      - run: npm test
+    # step은 작업의 단계를 정의
+     steps:
+      # 소스코드를 체크아웃 ===> actions/checkout 액션 활용 ===> 최신 디렉토리 버전 확인
+      - name: Checkout source code.
+        uses: actions/checkout@v2
+        # package를 install 하는 단계
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./my-agora-states-client
+        # clinet 디렉토리를 빌드하는 단계
+      - name: Build
+        run: npm run build
+        working-directory: ./my-agora-states-client
+        # github actions와 같이 ci/cd를 지원하는 플랫폼은 이미 자동화를 위한 aws cli와 같은 빌드 툴을 탑재하고 있음!
+        # AWS CLI 환경에서 실행되는 것을 가정하기에 AWS 버전 체크
+      - name: SHOW AWS CLI VERSION
+        run: aws--version
+      # 작업 로컬과 원격 aws s3의 파일을 동기화
+      - name: Sync Bucket
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_EC2_METADATA_DISABLED: true
+        # 역슬리시('\')는 조건이나 세부설정을 둘 때 길이가 긴 코드를 줄바꿈하기 위해 사용
+        run: aws s3 sync\
+            --region ap-northeast-2 \
+            # url 주소 입력 expect.(https://haseongbuildtest.)
+            build s3://fe-6-whaleinmilktea-s3 \
+            --delete
+        working-directory: ./my-agora-states-client/
