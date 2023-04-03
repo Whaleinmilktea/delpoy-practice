@@ -8,9 +8,10 @@ on:
 
 # 워크플로우 작업을 정의
 jobs:
-    runs-on: ubuntu-latest
-    # step은 작업의 단계를 정의
-     steps:
+    test:
+      runs-on: ubuntu-latest
+      # step은 작업의 단계를 정의
+      steps:
       # 소스코드를 체크아웃 ===> actions/checkout 액션 활용 ===> 최신 디렉토리 버전 확인
       - name: Checkout source code.
         uses: actions/checkout@v2
@@ -33,9 +34,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_EC2_METADATA_DISABLED: true
         # 역슬리시('\')는 조건이나 세부설정을 둘 때 길이가 긴 코드를 줄바꿈하기 위해 사용
-        run: aws s3 sync\
+        # url 주소 입력 expect.(https://haseongbuildtest.)
+        run: |
+            aws s3 sync\
             --region ap-northeast-2 \
-            # url 주소 입력 expect.(https://haseongbuildtest.)
             build s3://fe-6-whaleinmilktea-s3 \
             --delete
         working-directory: ./my-agora-states-client/
