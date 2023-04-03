@@ -8,8 +8,8 @@ on:
 
 # 워크플로우 작업을 정의
 jobs:
-    test:
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+      test:
       # step은 작업의 단계를 정의
       steps:
       # 소스코드를 체크아웃 ===> actions/checkout 액션 활용 ===> 최신 디렉토리 버전 확인
